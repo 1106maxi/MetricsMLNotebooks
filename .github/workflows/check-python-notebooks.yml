@@ -84,10 +84,7 @@ jobs:
 
     - name: Install R if folder is CM3 or T-ADML
       if: "(env.notebooks_changed == 'true') && ((matrix.directory == 'CM3' || matrix.directory == 'T-ADML') && matrix.os == 'ubuntu-latest')"
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y r-base
-      shell: bash
+      uses: r-lib/actions/setup-r@v2
 
     - name: Set up Python
       if: "(env.notebooks_changed == 'true') && (! (matrix.directory == 'CM3' && (matrix.os == 'windows-latest' || matrix.os == 'macos-latest')))"
@@ -118,6 +115,8 @@ jobs:
         flake8_errors=0
         for notebook in ${{ matrix.directory }}/*.ipynb; do
           [ "$(basename "$notebook")" = "python-dosearch.ipynb" ] && continue
+          # uses %%R (rpy2) cells, which flake8 cannot parse
+          [ "$(basename "$notebook")" = "python-ADML-401k.ipynb" ] && continue
           flake8-nb --config=.flake8 "$notebook" > "linting_logs/$(basename "$notebook" .ipynb)_linting.txt" 2>&1 || flake8_errors=$((flake8_errors+1))
         done
         echo "flake8_errors=$flake8_errors" >> $GITHUB_ENV

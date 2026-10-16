@@ -127,7 +127,8 @@ jobs:
             linters <- linters_with_defaults(line_length_linter = line_length_linter(120),
                                              object_name_linter = object_name_linter(styles = c("snake_case", "CamelCase", "camelCase")),
                                              object_usage_linter = NULL,
-                                             pipe_consistency_linter = NULL)
+                                             pipe_consistency_linter = NULL,
+                                             return_linter = NULL)
             rmd_files <- list.files(path = "${{ matrix.directory }}", pattern = "\\.Rmd$", full.names = TRUE)
             linting_error <- FALSE
             for (rfile in rmd_files) {
@@ -197,6 +198,8 @@ jobs:
           ' 2>/dev/null
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+          # let R (reticulate/keras) use the Python with TensorFlow installed above
+          RETICULATE_PYTHON: ${{ env.pythonLocation }}/bin/python
 
       - name: Upload execution log
         if: "((env.notebooks_changed == 'true') && (env.linting_errors_found == 'false'))"
