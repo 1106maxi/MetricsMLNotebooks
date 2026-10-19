@@ -71,7 +71,7 @@ jobs:
         if: env.notebooks_changed == 'true'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libuv1-dev
+          sudo apt-get install -y libcurl4-openssl-dev libuv1-dev libglpk-dev
 
       - name: Set up Python
         if: env.notebooks_changed == 'true'
